@@ -7,8 +7,11 @@ import dev.forkhandles.result4k.map
 import potfur.whatisnext.Error.Type.MISSING
 import potfur.whatisnext.FieldsSpec.Requirement.OPTIONAL
 import potfur.whatisnext.FieldsSpec.Requirement.REQUIRED
+import potfur.whatisnext.Specification.Type
 
-data object FieldType : Specification.Type
+data object FieldType : Type {
+    override val name = this.name()
+}
 
 data class Fields(val firstName: String?, val lastName: String?, val email: String?)
 

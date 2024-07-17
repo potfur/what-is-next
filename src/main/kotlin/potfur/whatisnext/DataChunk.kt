@@ -10,7 +10,9 @@ interface Specification<T : Type> {
     val type: T
     val state: State
 
-    interface Type
+    interface Type {
+        val name: String
+    }
 
     enum class State {
         COMPLETED,

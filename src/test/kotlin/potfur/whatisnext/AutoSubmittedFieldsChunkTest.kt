@@ -46,4 +46,14 @@ class AutoSubmittedFieldsChunkTest : ChunkTestCase() {
 
         assertNull(result)
     }
+
+    @Test
+    fun `it preserves chunk name`() {
+        val chunk = FieldsChunk(Storage())
+
+        assertEquals(
+            chunk.type.name,
+            AutoSubmittedChunk(chunk) { _, _, _ -> Success(fields) }.type.name
+        )
+    }
 }

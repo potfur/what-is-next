@@ -1,8 +1,12 @@
 package potfur.whatisnext
 
 import dev.forkhandles.result4k.Success
+import potfur.whatisnext.Specification.Type
 
-data class StubType(val type: String) : Specification.Type
+data class StubType(val type: String) : Type {
+    override val name = this.name()
+}
+
 data class StubSpec(override val type: StubType, override val state: Specification.State) : Specification<StubType>
 
 fun StubChunk(type: String, state: Specification.State, value: String? = null) =

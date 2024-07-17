@@ -6,7 +6,9 @@ import dev.forkhandles.result4k.map
 import potfur.whatisnext.Specification.State
 import potfur.whatisnext.Specification.Type
 
-data object ForwardType : Type
+data object ForwardType : Type {
+    override val name = this.name()
+}
 
 data class ForwardSpec<ID>(val id: ID, override val state: State) : Specification<ForwardType> {
     override val type = ForwardType

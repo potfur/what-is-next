@@ -2,7 +2,8 @@ package potfur.whatisnext
 
 import dev.forkhandles.result4k.map
 import dev.forkhandles.result4k.orThrow
-import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 
 class AutoSubmittedOptionsChunkTest : ChunkTestCase() {
@@ -18,7 +19,7 @@ class AutoSubmittedOptionsChunkTest : ChunkTestCase() {
 
         val result = chunk.view(flowId, requester).orThrow()
 
-        Assertions.assertEquals("B", result)
+        assertEquals("B", result)
     }
 
     @Test
@@ -29,7 +30,7 @@ class AutoSubmittedOptionsChunkTest : ChunkTestCase() {
 
         val result = chunk.view(flowId, requester).orThrow()
 
-        Assertions.assertEquals("A", result)
+        assertEquals("A", result)
     }
 
     @Test
@@ -40,6 +41,18 @@ class AutoSubmittedOptionsChunkTest : ChunkTestCase() {
 
         val result = chunk.view(flowId, requester).orThrow()
 
-        Assertions.assertNull(result)
+        assertNull(result)
+    }
+
+    @Test
+    fun `it preserves chunk name`() {
+        val chunk = OptionsChunk(Storage(), listOf("A", "B"))
+
+        assertEquals(
+            chunk.type.name,
+            AutoSubmittedChunk(chunk){ c, id, r ->
+                c.spec(id, r).map { it.options.singleOrNull() }
+            }.type.name
+        )
     }
 }

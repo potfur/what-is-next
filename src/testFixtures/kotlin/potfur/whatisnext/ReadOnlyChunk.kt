@@ -5,7 +5,9 @@ import dev.forkhandles.result4k.Success
 import potfur.whatisnext.Specification.State
 import potfur.whatisnext.Specification.Type
 
-data object ReadOnlyType : Type
+data object ReadOnlyType : Type {
+    override val name = this.name()
+}
 
 data object ReadOnlySpec : Specification<ReadOnlyType> {
     override val state = State.COMPLETED

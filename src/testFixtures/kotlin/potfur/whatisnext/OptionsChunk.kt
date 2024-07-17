@@ -7,8 +7,11 @@ import dev.forkhandles.result4k.map
 import dev.forkhandles.result4k.valueOrNull
 import potfur.whatisnext.Error.Type.INVALID
 import potfur.whatisnext.Error.Type.MISSING
+import potfur.whatisnext.Specification.Type
 
-data object OptionType : Specification.Type
+data object OptionType : Type {
+    override val name = this.name()
+}
 
 data class OptionSpec(override val state: Specification.State, val options: List<String>) :
     Specification<OptionType> {
