@@ -6,7 +6,7 @@ import potfur.whatisnext.Specification.State.OPTIONAL
 import potfur.whatisnext.Specification.Type
 
 
-interface Specification<T: Type> {
+interface Specification<T : Type> {
     val type: T
     val state: State
 
@@ -22,8 +22,9 @@ interface Specification<T: Type> {
         }
     }
 
-    fun isComplete() = state in listOf(COMPLETED, OPTIONAL)
 }
+
+fun <T : Type> Specification<T>.isComplete() = state in listOf(COMPLETED, OPTIONAL)
 
 interface ValidationError
 
