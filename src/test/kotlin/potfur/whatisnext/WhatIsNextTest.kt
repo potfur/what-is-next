@@ -109,6 +109,6 @@ class WhatIsNextTest {
         )
     }
 
-    private fun Result4k<List<ValidationError>, Exception>.orThrowOnInvalid() =
+    private fun Result4k<List<Error>, Exception>.orThrowOnInvalid() =
         peek { if (it.isNotEmpty()) throw Exception(it.joinToString()) }
 }

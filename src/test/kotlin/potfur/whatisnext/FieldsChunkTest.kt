@@ -44,7 +44,7 @@ class FieldsChunkTest : ChunkTestCase() {
             .validate(flowId, requester, fields)
             .orThrow()
 
-        assertEquals(emptyList<ValidationError>(), result)
+        assertEquals(emptyList<Error>(), result)
     }
 
     @Test
@@ -63,7 +63,7 @@ class FieldsChunkTest : ChunkTestCase() {
             .submit(flowId, requester, fields)
             .orThrow()
 
-        assertEquals(emptyList<ValidationError>(), result)
+        assertEquals(emptyList<Error>(), result)
         assertEquals(chunk.view(flowId, requester).orThrow(), fields)
     }
 
@@ -80,7 +80,7 @@ class FieldsChunkTest : ChunkTestCase() {
             .clear(flowId, requester)
             .orThrow()
 
-        assertEquals(emptyList<ValidationError>(), result)
+        assertEquals(emptyList<Error>(), result)
         assertNull(chunk.view(flowId, requester).orThrow())
     }
 }

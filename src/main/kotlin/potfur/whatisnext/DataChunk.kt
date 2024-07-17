@@ -28,16 +28,14 @@ interface Specification<T : Type> {
 
 fun <T : Type> Specification<T>.isComplete() = state in listOf(COMPLETED, OPTIONAL)
 
-interface ValidationError
-
 interface DataChunk<ID, T : Type, S : Specification<T>, R, D, F> {
     val type: T
     fun spec(flowId: ID, requester: R): Result4k<S, F>
     fun view(flowId: ID, requester: R): Result4k<D?, F>
 }
 
-interface MutableDataChunk<ID, T : Type, S : Specification<T>, R, D, F> : DataChunk<ID, T, S, R, D, F> {
-    fun validate(flowId: ID, requester: R, data: D?): Result4k<List<ValidationError>, F>
-    fun submit(flowId: ID, requester: R, data: D?): Result4k<List<ValidationError>, F>
-    fun clear(flowId: ID, requester: R): Result4k<List<ValidationError>, F>
+interface MutableDataChunk<ID, T : Type, S : Specification<T>, R, D, E, F> : DataChunk<ID, T, S, R, D, F> {
+    fun validate(flowId: ID, requester: R, data: D?): Result4k<List<E>, F>
+    fun submit(flowId: ID, requester: R, data: D?): Result4k<List<E>, F>
+    fun clear(flowId: ID, requester: R): Result4k<List<E>, F>
 }

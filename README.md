@@ -23,6 +23,14 @@ The interaction interface tells what can be done with chunk, and it can be defin
 The immutable data chunk, presents just data to the client application, for example a cost breakdown based on already provided data.
 The mutable data chunk provides additionally methods to validate, submit or clear/remove data.
 
+Both interfaces use few types in their definitions, in order of appearance those are:
+- `ID` - type of the flow identifier, that chunk is referencing to, eg. `Int`, `UUID`, or `OrderId` that refers order user is placing 
+- `T` - is the type of chunk
+- `S` - is the specification class used for that chunk
+- `R` - set of properties describing requester, the user doing the request
+- `E` - type used for validation errors, present only in mutable data chunk interface
+- `F` - type used for failures, eg. `Exception`
+
 The data chunk definition is [here](./src/main/kotlin/potfur/whatisnext/DataChunk.kt), and some sample implementations:
 - [FieldsChunk](./src/testFixtures/kotlin/potfur/whatisnext/FieldsChunk.kt) - a _form_ with 3 fields,
 - [OptionsChunk](./src/testFixtures/kotlin/potfur/whatisnext/OptionsChunk.kt) - a _dropdown_ with list of possible choices,

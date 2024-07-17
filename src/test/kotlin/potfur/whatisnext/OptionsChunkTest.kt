@@ -54,7 +54,7 @@ class OptionsChunkTest : ChunkTestCase() {
             .validate(flowId, requester, options.first())
             .orThrow()
 
-        assertEquals(emptyList<ValidationError>(), result)
+        assertEquals(emptyList<Error>(), result)
     }
 
     @Test
@@ -82,7 +82,7 @@ class OptionsChunkTest : ChunkTestCase() {
             .submit(flowId, requester, options.first())
             .orThrow()
 
-        assertEquals(emptyList<ValidationError>(), result)
+        assertEquals(emptyList<Error>(), result)
         assertEquals(chunk.view(flowId, requester).orThrow(), options.first())
     }
 
@@ -99,7 +99,7 @@ class OptionsChunkTest : ChunkTestCase() {
             .clear(flowId, requester)
             .orThrow()
 
-        assertEquals(emptyList<ValidationError>(), result)
+        assertEquals(emptyList<Error>(), result)
         assertNull(chunk.view(flowId, requester).orThrow())
     }
 }

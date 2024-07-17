@@ -36,7 +36,7 @@ data class FieldsSpec(
 
 class FieldsChunk(
     private val storage: Storage<Id, Fields, Exception>
-) : MutableDataChunk<Id, FieldType, FieldsSpec, Requester, Fields, Exception> {
+) : MutableDataChunk<Id, FieldType, FieldsSpec, Requester, Fields, Error, Exception> {
     override val type: FieldType = FieldType
 
     override fun spec(flowId: Id, requester: Requester) =
@@ -54,14 +54,14 @@ class FieldsChunk(
             )
         )
 
-    override fun submit(flowId: Id, requester: Requester, data: Fields?): Result4k<List<ValidationError>, Exception> =
+    override fun submit(flowId: Id, requester: Requester, data: Fields?): Result4k<List<Error>, Exception> =
         validate(flowId, requester, data)
             .flatMap {
                 if (it.isEmpty() && data != null) storage.store(flowId, data).flatMap { Success(emptyList()) }
                 else Success(it)
             }
 
-    override fun clear(flowId: Id, requester: Requester): Result4k<List<ValidationError>, Exception> =
+    override fun clear(flowId: Id, requester: Requester): Result4k<List<Error>, Exception> =
         storage.clear(flowId).map { emptyList() }
 
     private fun FieldsSpec.Requirement.validate(name: String, value: String?) =

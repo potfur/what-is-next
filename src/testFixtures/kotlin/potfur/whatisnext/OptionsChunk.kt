@@ -21,7 +21,7 @@ data class OptionSpec(override val state: Specification.State, val options: List
 class OptionsChunk(
     private val storage: Storage<Id, String, Exception>,
     private val availableOptions: List<String>,
-) : MutableDataChunk<Id, OptionType, OptionSpec, Requester, String, Exception> {
+) : MutableDataChunk<Id, OptionType, OptionSpec, Requester, String, Error, Exception> {
     override val type: OptionType = OptionType
 
     override fun spec(flowId: Id, requester: Requester) =
@@ -39,13 +39,13 @@ class OptionsChunk(
             }
         )
 
-    override fun submit(flowId: Id, requester: Requester, data: String?): Result4k<List<ValidationError>, Exception> =
+    override fun submit(flowId: Id, requester: Requester, data: String?): Result4k<List<Error>, Exception> =
         validate(flowId, requester, data)
             .flatMap {
                 if (it.isEmpty() && data != null) storage.store(flowId, data).flatMap { Success(emptyList()) }
                 else Success(it)
             }
 
-    override fun clear(flowId: Id, requester: Requester): Result4k<List<ValidationError>, Exception> =
+    override fun clear(flowId: Id, requester: Requester): Result4k<List<Error>, Exception> =
         storage.clear(flowId).map { emptyList() }
 }
