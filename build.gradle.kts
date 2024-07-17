@@ -16,11 +16,12 @@ allprojects {
     }
 
     dependencies {
-        testImplementation(platform(Testing.junit.bom))
-        testImplementation(Testing.junit.jupiter)
-
         implementation(platform("dev.forkhandles:forkhandles-bom:_"))
         implementation("dev.forkhandles:result4k")
+        implementation("dev.forkhandles:values4k")
+
+        testImplementation(platform(Testing.junit.bom))
+        testImplementation(Testing.junit.jupiter)
     }
 
     tasks {

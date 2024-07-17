@@ -12,7 +12,7 @@ import potfur.whatisnext.Specification.State.OPTIONAL
 import potfur.whatisnext.Specification.State.REQUIRED
 
 class WhatIsNextTest {
-    private val flowId = Id(1)
+    private val flowId = Id.of(1)
     private val requester = Requester(2)
 
     @Test
