@@ -7,6 +7,8 @@ import dev.forkhandles.result4k.peek
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import potfur.whatisnext.Option.Companion.A
+import potfur.whatisnext.Option.Companion.B
 import potfur.whatisnext.Specification.State.COMPLETED
 import potfur.whatisnext.Specification.State.OPTIONAL
 import potfur.whatisnext.Specification.State.REQUIRED
@@ -71,7 +73,7 @@ class WhatIsNextTest {
 
     @Test
     fun `it returns path for option`() {
-        val options = OptionsChunk(Storage(), listOf("FIELDS", "INFO"))
+        val options = OptionsChunk(Storage(), listOf(A, B))
         val fields = FieldsChunk(Storage())
         val info = ReadOnlyChunk { _, _ -> Success("DONE") }
 
@@ -87,14 +89,14 @@ class WhatIsNextTest {
             flow.whatIsNext(flowId, requester).orThrow().map { it.type }
         )
 
-        options.submit(flowId, requester, "INFO").orThrowOnInvalid()
+        options.submit(flowId, requester, A).orThrowOnInvalid()
 
         assertEquals(
             listOf(options.type, info.type),
             flow.whatIsNext(flowId, requester).orThrow().map { it.type }
         )
 
-        options.submit(flowId, requester, "FIELDS").orThrowOnInvalid()
+        options.submit(flowId, requester, B).orThrowOnInvalid()
 
         assertEquals(
             listOf(options.type, fields.type),

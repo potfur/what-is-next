@@ -5,15 +5,17 @@ import dev.forkhandles.result4k.orThrow
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
+import potfur.whatisnext.Option.Companion.A
+import potfur.whatisnext.Option.Companion.B
 
 class AutoSubmittedOptionsChunkTest : ChunkTestCase() {
 
     @Test
     fun `it does not submit when there is previous value`() {
-        val storage = Storage<Id, String, Exception>()
-            .apply { store(flowId, "B") }
+        val storage = Storage<Id, Option, Exception>()
+            .apply { store(flowId, B) }
 
-        val chunk = AutoSubmittedChunk(OptionsChunk(storage, listOf("A"))) { c, id, r ->
+        val chunk = AutoSubmittedChunk(OptionsChunk(storage, listOf(A))) { c, id, r ->
             c.spec(id, r).map { it.options.singleOrNull() }
         }
 
@@ -24,7 +26,7 @@ class AutoSubmittedOptionsChunkTest : ChunkTestCase() {
 
     @Test
     fun `it submits when there is no previous value`() {
-        val chunk = AutoSubmittedChunk(OptionsChunk(Storage(), listOf("A"))) { c, id, r ->
+        val chunk = AutoSubmittedChunk(OptionsChunk(Storage(), listOf(A))) { c, id, r ->
             c.spec(id, r).map { it.options.singleOrNull() }
         }
 
@@ -35,7 +37,7 @@ class AutoSubmittedOptionsChunkTest : ChunkTestCase() {
 
     @Test
     fun `it does nothing when theres nothing to submit`() {
-        val chunk = AutoSubmittedChunk(OptionsChunk(Storage(), listOf("A", "B"))) { c, id, r ->
+        val chunk = AutoSubmittedChunk(OptionsChunk(Storage(), listOf(A, B))) { c, id, r ->
             c.spec(id, r).map { it.options.singleOrNull() }
         }
 
@@ -46,7 +48,7 @@ class AutoSubmittedOptionsChunkTest : ChunkTestCase() {
 
     @Test
     fun `it preserves chunk name`() {
-        val chunk = OptionsChunk(Storage(), listOf("A", "B"))
+        val chunk = OptionsChunk(Storage(), listOf(A, B))
 
         assertEquals(
             chunk.type.name,

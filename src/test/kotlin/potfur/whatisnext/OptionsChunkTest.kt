@@ -6,11 +6,12 @@ import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 import potfur.whatisnext.Error.Type.INVALID
 import potfur.whatisnext.Error.Type.MISSING
+import potfur.whatisnext.Option.Companion.A
+import potfur.whatisnext.Option.Companion.B
 import potfur.whatisnext.Specification.State.REQUIRED
 
-
 class OptionsChunkTest : ChunkTestCase() {
-    private val options = listOf("FIELDS", "FINISH")
+    private val options = listOf(A, B)
 
     @Test
     fun `it shows options in specification`() {
@@ -42,7 +43,7 @@ class OptionsChunkTest : ChunkTestCase() {
     @Test
     fun `it validates as invalid when option is invalid`() {
         val result = OptionsChunk(Storage(), options)
-            .validate(flowId, requester, "anything")
+            .validate(flowId, requester, Option.of("anything"))
             .orThrow()
 
         assertEquals(listOf(Error("data", INVALID)), result)
@@ -69,7 +70,7 @@ class OptionsChunkTest : ChunkTestCase() {
     @Test
     fun `it rejects submit when option is invalid`() {
         val result = OptionsChunk(Storage(), options)
-            .submit(flowId, requester, "anything")
+            .submit(flowId, requester, Option.of("anything"))
             .orThrow()
 
         assertEquals(listOf(Error("data", INVALID)), result)
