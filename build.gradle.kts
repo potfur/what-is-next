@@ -20,6 +20,11 @@ allprojects {
         implementation("dev.forkhandles:result4k")
         implementation("dev.forkhandles:values4k")
 
+        implementation(platform(Http4k.bom))
+        implementation(Http4k.core)
+        implementation(Http4k.contract)
+        implementation(Http4k.format.jackson)
+
         testImplementation(platform(Testing.junit.bom))
         testImplementation(Testing.junit.jupiter)
     }
