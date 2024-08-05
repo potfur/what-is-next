@@ -15,12 +15,13 @@ class ReadOnlyChunkTest : AdapterTestCase() {
     private val value = "something"
     private val payloadLens = TestingJson.autoBody<DataEnvelope.Value<String?>>().toLens()
 
-    private val adapter = ChunkHttpAdapter(
-        basePath = basePath,
-        chunk = ReadOnlyChunk(viewFn = { _, _ -> Success(value) }),
-        injector = { r, v -> r.with(payloadLens of DataEnvelope.Value(v)) },
-        requesterResolver = requesterResolver
-    ).asRoutingHttpAdapter()
+    private val adapter = ReadOnlyChunk(viewFn = { _, _ -> Success(value) })
+        .asHttpAdapter(
+            basePath = basePath,
+            requesterResolver = requesterResolver,
+            dataInjector = { r, v -> r.with(payloadLens of DataEnvelope.Value(v)) }
+        )
+        .asRoutingHttpAdapter()
 
     @Test
     fun `it serves data for chunk`() {

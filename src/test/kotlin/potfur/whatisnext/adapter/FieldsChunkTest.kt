@@ -24,14 +24,15 @@ class FieldsChunkTest : AdapterTestCase() {
     private val payloadLens = TestingJson.autoBody<DataEnvelope.Structured<Fields?>>().toLens()
     private val validationLens = TestingJson.autoBody<DataEnvelope.Structured<List<Error>>>().toLens()
 
-    private val adapter = MutableChunkHttpAdapter(
-        basePath = basePath,
-        chunk = FieldsChunk(storage),
-        injector = { r, v -> r.with(payloadLens of DataEnvelope.Structured(v)) },
-        extractor = { r -> payloadLens(r).data },
-        errors = { r, e -> r.with(validationLens of DataEnvelope.Structured(e)) },
-        requesterResolver = requesterResolver
-    ).asRoutingHttpAdapter()
+    private val adapter = FieldsChunk(storage)
+        .asHttpAdapter(
+            basePath = basePath,
+            requesterResolver = requesterResolver,
+            dataInjector = { r, v -> r.with(payloadLens of DataEnvelope.Structured(v)) },
+            errorsInjector = { r, e -> r.with(validationLens of DataEnvelope.Structured(e)) },
+            dataExtractor = { r -> payloadLens(r).data }
+        )
+        .asRoutingHttpAdapter()
 
     @Test
     fun `it serves empty data envelope for empty chunk`() {

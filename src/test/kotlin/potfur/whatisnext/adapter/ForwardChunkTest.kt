@@ -24,12 +24,13 @@ class ForwardChunkTest : AdapterTestCase() {
     }
     private val payloadLens = TestingJson.autoBody<DataEnvelope.Value<Int?>>().toLens()
 
-    private val adapter = ChunkHttpAdapter(
-        basePath = basePath,
-        chunk = ForwardChunk(targetId, target),
-        injector = { r, v -> r.with(payloadLens of DataEnvelope.Value(v)) },
-        requesterResolver = requesterResolver
-    ).asRoutingHttpAdapter()
+    private val adapter = ForwardChunk(targetId, target)
+        .asHttpAdapter(
+            basePath = basePath,
+            requesterResolver = requesterResolver,
+            dataInjector = { r, v -> r.with(payloadLens of DataEnvelope.Value(v)) }
+        )
+        .asRoutingHttpAdapter()
 
     @Test
     fun `it serves forwarding data for chunk`() {

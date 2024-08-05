@@ -3,6 +3,7 @@ package potfur.whatisnext.adapter
 import dev.forkhandles.result4k.get
 import dev.forkhandles.result4k.map
 import dev.forkhandles.result4k.mapFailure
+import org.http4k.contract.ContractRoute
 import org.http4k.contract.ContractRouteSpec1
 import org.http4k.core.Method
 import org.http4k.core.Request
@@ -19,7 +20,7 @@ open class WhatIsNextAdapter<ID, T : Type, S : Specification<out T>, R, F>(
     private val specInjector: (Response, List<S>) -> Response,
     private val statusInjector: (Response, Boolean) -> Response,
     private val requesterResolver: (Request) -> R,
-) : HttpAdapter {
+) : Iterable<ContractRoute> {
     fun next() =
         basePath / "next" bindContract Method.GET to { id, _ ->
             { request ->
