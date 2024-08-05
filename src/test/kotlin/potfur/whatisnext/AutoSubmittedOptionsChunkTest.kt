@@ -21,7 +21,7 @@ class AutoSubmittedOptionsChunkTest : ChunkTestCase() {
 
         val result = chunk.view(flowId, requester).orThrow()
 
-        assertEquals("B", result)
+        assertEquals(B, result)
     }
 
     @Test
@@ -32,7 +32,7 @@ class AutoSubmittedOptionsChunkTest : ChunkTestCase() {
 
         val result = chunk.view(flowId, requester).orThrow()
 
-        assertEquals("A", result)
+        assertEquals(A, result)
     }
 
     @Test
@@ -52,7 +52,7 @@ class AutoSubmittedOptionsChunkTest : ChunkTestCase() {
 
         assertEquals(
             chunk.type.name,
-            AutoSubmittedChunk(chunk){ c, id, r ->
+            AutoSubmittedChunk(chunk) { c, id, r ->
                 c.spec(id, r).map { it.options.singleOrNull() }
             }.type.name
         )

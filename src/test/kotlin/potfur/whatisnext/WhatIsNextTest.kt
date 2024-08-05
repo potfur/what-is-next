@@ -79,8 +79,8 @@ class WhatIsNextTest {
 
         val flow = ChunkAggregateWhatIsNext(
             options.thenOnValue(
-                branch("FIELDS", fields.thenOnValue(branch("DUDE", info)) { it?.firstName }),
-                branch("INFO", info)
+                branch(A, info),
+                branch(B, fields.thenOnValue(branch("DUDE", info)) { it?.firstName }),
             ) { it }
         )
 
