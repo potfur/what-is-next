@@ -3,9 +3,7 @@ package potfur.whatisnext
 import dev.forkhandles.result4k.Success
 import potfur.whatisnext.Specification.Type
 
-data class StubType(val type: String) : Type {
-    override val name = this.name()
-}
+data class StubType(override val name: String) : Type
 
 data class StubSpec(override val type: StubType, override val state: Specification.State) : Specification<StubType>
 
