@@ -2,44 +2,44 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
-    kotlin("jvm") version "_"
+    kotlin("jvm")
     idea
+    `java-test-fixtures`
 }
 
-allprojects {
-    apply(plugin = "kotlin")
-    apply(plugin = "java-test-fixtures")
+repositories {
+    gradlePluginPortal()
+    mavenCentral()
+}
 
-    repositories {
-        gradlePluginPortal()
-        mavenCentral()
-    }
+kotlin {
+    jvmToolchain(21)
+}
 
-    dependencies {
-        implementation(platform("dev.forkhandles:forkhandles-bom:_"))
-        implementation("dev.forkhandles:result4k")
-        implementation("dev.forkhandles:values4k")
+dependencies {
+    api(platform("dev.forkhandles:forkhandles-bom:_"))
+    api("dev.forkhandles:result4k")
+    api("dev.forkhandles:values4k")
 
-        implementation(platform(Http4k.bom))
-        implementation(Http4k.core)
-        implementation(Http4k.contract)
-        implementation(Http4k.format.jackson)
+    api(platform("org.http4k:http4k-bom:_"))
+    api("org.http4k:http4k-core")
+    api("org.http4k:http4k-contract")
+    api("org.http4k:http4k-format-jackson")
 
-        testImplementation(platform(Testing.junit.bom))
-        testImplementation(Testing.junit.jupiter)
-    }
+    testApi(platform("org.junit:junit-bom:_"))
+    testApi("org.junit.jupiter:junit-jupiter")
+}
 
-    tasks {
-        test {
-            useJUnitPlatform()
-            outputs.upToDateWhen { false }
-            testLogging {
-                events = TestLogEvent.values().toSet()
-                exceptionFormat = FULL
-                showExceptions = true
-                showCauses = true
-                showStackTraces = true
-            }
+tasks {
+    test {
+        useJUnitPlatform()
+        outputs.upToDateWhen { false }
+        testLogging {
+            events = TestLogEvent.values().toSet()
+            exceptionFormat = FULL
+            showExceptions = true
+            showCauses = true
+            showStackTraces = true
         }
     }
 }
