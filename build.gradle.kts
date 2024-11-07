@@ -28,6 +28,8 @@ dependencies {
 
     testApi(platform("org.junit:junit-bom:_"))
     testApi("org.junit.jupiter:junit-jupiter")
+    testApi("org.junit.jupiter:junit-jupiter")
+    testApi("org.http4k:http4k-testing-tracerbullet")
 }
 
 tasks {

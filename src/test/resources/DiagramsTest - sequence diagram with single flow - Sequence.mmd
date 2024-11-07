@@ -1,0 +1,32 @@
+sequenceDiagram
+    title DiagramsTest - sequence diagram with single flow - Sequence
+    participant Client
+    participant Application
+    Client ->> Application: GET foo/1/next
+    activate Application
+    Application ->> Client: 200 OK
+    deactivate Application
+    Client ->> Application: POST foo/1/option
+    activate Application
+    Application ->> Client: 200 OK
+    deactivate Application
+    Client ->> Application: GET foo/1/next
+    activate Application
+    Application ->> Client: 200 OK
+    deactivate Application
+    Client ->> Application: POST foo/1/option
+    activate Application
+    Application ->> Client: 200 OK
+    deactivate Application
+    Client ->> Application: GET foo/1/next
+    activate Application
+    Application ->> Client: 200 OK
+    deactivate Application
+    Client ->> Application: POST foo/1/field
+    activate Application
+    Application ->> Client: 200 OK
+    deactivate Application
+    Client ->> Application: GET foo/1/next
+    activate Application
+    Application ->> Client: 200 OK
+    deactivate Application

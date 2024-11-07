@@ -10,13 +10,10 @@ import org.junit.jupiter.api.Test
 import potfur.whatisnext.ChunkAggregateWhatIsNext
 import potfur.whatisnext.Id
 import potfur.whatisnext.Specification
-import potfur.whatisnext.Specification.State
 import potfur.whatisnext.Specification.State.COMPLETED
 import potfur.whatisnext.Specification.State.REQUIRED
 import potfur.whatisnext.Specification.Type
 import potfur.whatisnext.StubChunk
-
-private data class GenericSpec(val type: String, val state: State)
 
 class WhatIsNextTest : AdapterTestCase() {
     private val parent = StubChunk("parent", REQUIRED)
