@@ -14,6 +14,8 @@ import org.http4k.core.Request
 import org.http4k.core.Response
 import org.http4k.core.Status.Companion.NOT_FOUND
 import org.http4k.core.Status.Companion.OK
+import org.http4k.core.with
+import org.http4k.lens.BiDiBodyLens
 import potfur.whatisnext.DataChunk
 import potfur.whatisnext.MutableDataChunk
 import potfur.whatisnext.Specification
@@ -53,6 +55,20 @@ fun <ID, T : Type, S : Specification<T>, R, D, F> deleteContractRoute(
     { request -> handler(id, request) }
 }
 
+@JvmName("asValueHttpHandler")
+fun <ID, T : Type, S : Specification<T>, R, D, F> DataChunk<ID, T, S, R, D, F>.asHttpAdapter(
+    basePath: ContractRouteSpec1<ID>,
+    requesterResolver: (Request) -> R,
+    payloadLens: BiDiBodyLens<DataEnvelope.Value<D?>>,
+) = asHttpAdapter(basePath, requesterResolver, { r, v -> r.with(payloadLens of DataEnvelope.Value(v)) })
+
+@JvmName("asStructuredHttpHandler")
+fun <ID, T : Type, S : Specification<T>, R, D, F> DataChunk<ID, T, S, R, D, F>.asHttpAdapter(
+    basePath: ContractRouteSpec1<ID>,
+    requesterResolver: (Request) -> R,
+    payloadLens: BiDiBodyLens<DataEnvelope.Structured<D?>>,
+) = asHttpAdapter(basePath, requesterResolver, { r, v -> r.with(payloadLens of DataEnvelope.Structured(v)) })
+
 fun <ID, T : Type, S : Specification<T>, R, D, F> DataChunk<ID, T, S, R, D, F>.asHttpAdapter(
     basePath: ContractRouteSpec1<ID>,
     requesterResolver: (Request) -> R,
@@ -64,6 +80,34 @@ fun <ID, T : Type, S : Specification<T>, R, D, F> DataChunk<ID, T, S, R, D, F>.a
             .mapFailure { Response(NOT_FOUND) }
             .get()
     }
+)
+
+@JvmName("asValueHttpHandler")
+fun <ID, T : Type, S : Specification<T>, R, D, E, F> MutableDataChunk<ID, T, S, R, D, E, F>.asHttpAdapter(
+    basePath: ContractRouteSpec1<ID>,
+    requesterResolver: (Request) -> R,
+    payloadLens: BiDiBodyLens<DataEnvelope.Value<D?>>,
+    validationLens: BiDiBodyLens<DataEnvelope.Structured<List<E>>>,
+) = asHttpAdapter(
+    basePath = basePath,
+    requesterResolver = requesterResolver,
+    dataInjector = { r, v -> r.with(payloadLens of DataEnvelope.Value(v)) },
+    errorsInjector = { r, e -> r.with(validationLens of DataEnvelope.Structured(e)) },
+    dataExtractor = { r -> payloadLens(r).data.value }
+)
+
+@JvmName("asStructuredHttpHandler")
+fun <ID, T : Type, S : Specification<T>, R, D, E, F> MutableDataChunk<ID, T, S, R, D, E, F>.asHttpAdapter(
+    basePath: ContractRouteSpec1<ID>,
+    requesterResolver: (Request) -> R,
+    payloadLens: BiDiBodyLens<DataEnvelope.Structured<D?>>,
+    validationLens: BiDiBodyLens<DataEnvelope.Structured<List<E>>>,
+) = asHttpAdapter(
+    basePath = basePath,
+    requesterResolver = requesterResolver,
+    dataInjector = { r, v -> r.with(payloadLens of DataEnvelope.Structured(v)) },
+    errorsInjector = { r, e -> r.with(validationLens of DataEnvelope.Structured(e)) },
+    dataExtractor = { r -> payloadLens(r).data }
 )
 
 fun <ID, T : Type, S : Specification<T>, R, D, E, F> MutableDataChunk<ID, T, S, R, D, E, F>.asHttpAdapter(

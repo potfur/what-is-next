@@ -10,6 +10,8 @@ import org.http4k.core.Request
 import org.http4k.core.Response
 import org.http4k.core.Status.Companion.NOT_FOUND
 import org.http4k.core.Status.Companion.OK
+import org.http4k.core.with
+import org.http4k.lens.BiDiBodyLens
 import potfur.whatisnext.Specification
 import potfur.whatisnext.Specification.Type
 import potfur.whatisnext.WhatIsNext
@@ -42,3 +44,16 @@ open class WhatIsNextAdapter<ID, T : Type, S : Specification<out T>, R, F>(
 
     override fun iterator() = listOf(next(), status()).iterator()
 }
+
+fun <ID, T : Type, S : Specification<out T>, R, F> WhatIsNext<ID, T, S, R, F>.asHttpAdapter(
+    basePath: ContractRouteSpec1<ID>,
+    specLens: BiDiBodyLens<DataEnvelope.Structured<List<Specification<out Type>>>>,
+    statusLens: BiDiBodyLens<DataEnvelope.Value<Boolean>>,
+    requesterResolver: (Request) -> R,
+) = WhatIsNextAdapter(
+    basePath = basePath,
+    flow = this,
+    specInjector = { r, v -> r.with(specLens of DataEnvelope.Structured(v)) },
+    statusInjector = { r, v -> r.with(statusLens of DataEnvelope.Value(v)) },
+    requesterResolver = requesterResolver,
+)

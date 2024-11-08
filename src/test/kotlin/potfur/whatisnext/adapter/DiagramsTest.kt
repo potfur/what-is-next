@@ -62,54 +62,45 @@ class DiagramsTest : AdapterTestCase() {
         ) { it }
     )
 
-    private val specLens = TestingJson.autoBody<DataEnvelope.Structured<List<Specification<out Type>>>>().toLens()
-    private val statusLens = TestingJson.autoBody<DataEnvelope.Value<Boolean>>().toLens()
     private val genericLens = TestingJson.autoBody<DataEnvelope.Structured<List<GenericSpec>>>().toLens()
     private val validationLens = TestingJson.autoBody<DataEnvelope.Structured<List<Error>>>().toLens()
 
-    private val optionsPayloadLens = TestingJson.autoBody<DataEnvelope.Value<Option?>>().toLens()
-    private val fieldsPayloadLens = TestingJson.autoBody<DataEnvelope.Structured<Fields?>>().toLens()
-    private val infoPayloadLens = TestingJson.autoBody<DataEnvelope.Value<String?>>().toLens()
-
-    private val whatIsNextAdapter = WhatIsNextAdapter(
+    private val whatIsNextAdapter = flow.asHttpAdapter(
         basePath = basePath,
-        flow = flow,
-        specInjector = { r, v -> r.with(specLens of DataEnvelope.Structured(v)) },
-        statusInjector = { r, v -> r.with(statusLens of DataEnvelope.Value(v)) },
+        specLens = TestingJson.autoBody<DataEnvelope.Structured<List<Specification<out Type>>>>().toLens(),
+        statusLens = TestingJson.autoBody<DataEnvelope.Value<Boolean>>().toLens(),
         requesterResolver = requesterResolver
     )
     private val optionsAdapter = options.asHttpAdapter(
         basePath = basePath,
         requesterResolver = requesterResolver,
-        dataInjector = { r, v -> r.with(optionsPayloadLens of DataEnvelope.Value(v)) },
-        errorsInjector = { r, e -> r.with(validationLens of DataEnvelope.Structured(e)) },
-        dataExtractor = { r -> optionsPayloadLens(r).data.value }
+        payloadLens = TestingJson.autoBody<DataEnvelope.Value<Option?>>().toLens(),
+        validationLens = validationLens
     )
     private val fieldsAdapter = fields.asHttpAdapter(
         basePath = basePath,
         requesterResolver = requesterResolver,
-        dataInjector = { r, v -> r.with(fieldsPayloadLens of DataEnvelope.Structured(v)) },
-        errorsInjector = { r, e -> r.with(validationLens of DataEnvelope.Structured(e)) },
-        dataExtractor = { r -> fieldsPayloadLens(r).data }
+        payloadLens = TestingJson.autoBody<DataEnvelope.Structured<Fields?>>().toLens(),
+        validationLens = validationLens
     )
     private val infoAdapter = info.asHttpAdapter(
         basePath = basePath,
         requesterResolver = requesterResolver,
-        dataInjector = { r, v -> r.with(infoPayloadLens of DataEnvelope.Value(v)) },
+        payloadLens = TestingJson.autoBody<DataEnvelope.Value<String?>>().toLens()
     )
+    private val app = (whatIsNextAdapter + optionsAdapter + fieldsAdapter + infoAdapter).asRoutingHttpAdapter()
 
     private val clientTracing = ClientFilters.RequestTracing()
         .then(ReportHttpTransaction {
             AddZipkinTraces().then(AddServiceName("Client")).then(events)(Outgoing(it))
         })
-    private val serverTracing = ServerFilters
-        .RequestTracing()
+    private val serverTracing = ServerFilters.RequestTracing()
         .then(ReportHttpTransaction {
             AddZipkinTraces().then(AddServiceName("Application")).then(events)(Incoming(it))
         })
     private val http = clientTracing
         .then(serverTracing)
-        .then((whatIsNextAdapter + optionsAdapter + fieldsAdapter + infoAdapter).asRoutingHttpAdapter())
+        .then(app)
 
     @Test
     fun `sequence diagram with single flow`() {
@@ -151,7 +142,7 @@ class DiagramsTest : AdapterTestCase() {
         Request(POST, "foo/{flowId}/option")
             .with(
                 Path.value(Id).of("flowId") of flowId,
-                optionsPayloadLens of DataEnvelope.Value(option)
+                TestingJson.autoBody<DataEnvelope.Value<Option?>>().toLens() of DataEnvelope.Value(option)
             )
             .use(http)
             .handleOrThrow(validationLens)
@@ -161,7 +152,7 @@ class DiagramsTest : AdapterTestCase() {
         Request(POST, "foo/{flowId}/field")
             .with(
                 Path.value(Id).of("flowId") of flowId,
-                fieldsPayloadLens of DataEnvelope.Structured(data)
+                TestingJson.autoBody<DataEnvelope.Structured<Fields?>>().toLens() of DataEnvelope.Structured(data)
             )
             .use(http)
             .handleOrThrow(validationLens)
